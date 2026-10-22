@@ -1,5 +1,5 @@
 # Public HTTPS entry: ALB -> frontend pods; nginx inside forwards /api to the backend.
-# <CERT_ARN> and <APP_HOST> are filled in once with sed (guide Step 3).
+# arn:aws:acm:ap-south-1:014882039467:certificate/056cd22c-8739-46ef-bbb6-a192dd6e696b and bmi.bestclick.click are filled in once with sed (guide Step 3).
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -12,12 +12,12 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/certificate-arn: <CERT_ARN>
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:014882039467:certificate/056cd22c-8739-46ef-bbb6-a192dd6e696b
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
 spec:
   ingressClassName: alb
   rules:
-    - host: <APP_HOST>
+    - host: bmi.bestclick.click
       http:
         paths:
           - path: /

@@ -1,4 +1,4 @@
-# Tier 2 — Node.js API. <ACCOUNT_ID> and <APP_HOST> are filled in once with sed (guide Step 3); CI then updates <TAG>.
+# Tier 2 — Node.js API. <ACCOUNT_ID> and bmi.bestclick.click are filled in once with sed (guide Step 3); CI then updates <TAG>.
 # Changes vs repo: no imagePullSecrets (EKS nodes pull from ECR with their IAM role),
 # FRONTEND_URL = your HTTPS host (CORS), HPA added.
 apiVersion: v1
@@ -11,7 +11,7 @@ metadata:
 data:
   NODE_ENV: "production"
   PORT: "3000"
-  FRONTEND_URL: "https://<APP_HOST>"
+  FRONTEND_URL: "https://bmi.bestclick.click"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,7 +37,7 @@ spec:
           labelSelector: { matchLabels: { app: bmi-backend } }
       containers:
         - name: bmi-backend
-          image: <ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/bmi-backend:<TAG>
+          image: 014882039467.dkr.ecr.ap-south-1.amazonaws.com/bmi-backend:37abd74-193255
           ports:
             - containerPort: 3000
           envFrom:
