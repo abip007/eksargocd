@@ -1,0 +1,29 @@
+# Public HTTPS entry: ALB -> frontend pods; nginx inside forwards /api to the backend.
+# <CERT_ARN> and <APP_HOST> are filled in once with sed (guide Step 3).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bmi
+  namespace: bmi-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/certificate-arn: <CERT_ARN>
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+spec:
+  ingressClassName: alb
+  rules:
+    - host: <APP_HOST>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bmi-frontend-svc
+                port:
+                  number: 80

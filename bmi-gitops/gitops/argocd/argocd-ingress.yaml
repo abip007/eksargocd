@@ -1,0 +1,32 @@
+# Optional: Argo CD UI at https://argocd.bestclick.click through an ALB.
+# Requires argocd-server to run with server.insecure=true (TLS ends at the ALB) - see guide Step 2.4.
+# Replace <CERT_ARN>.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/certificate-arn: <CERT_ARN>
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    # Restrict who can reach the UI (your office/home IP). Remove to open it.
+    alb.ingress.kubernetes.io/inbound-cidrs: <YOUR_PUBLIC_IP>/32
+spec:
+  ingressClassName: alb
+  rules:
+    - host: argocd.bestclick.click
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
